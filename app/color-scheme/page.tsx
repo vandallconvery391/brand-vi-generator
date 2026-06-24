@@ -86,35 +86,13 @@ export default function ColorScheme() {
     setTimeout(() => setCopiedIndex(null), 2000)
   }
 
-  const getColorName = (color: string) => {
-    const colorMap: Record<string, string> = {
-      '#1e40af': '主色',
-      '#3b82f6': '辅助色',
-      '#f59e0b': '强调色',
-      '#64748b': '中性色',
-      '#f8fafc': '背景色',
-      '#ea580c': '主色',
-      '#fb923c': '辅助色',
-      '#16a34a': '强调色',
-      '#fff7ed': '背景色',
-      '#7c3aed': '主色',
-      '#a78bfa': '辅助色',
-      '#ec4899': '强调色',
-      '#faf5ff': '背景色',
-      '#059669': '主色',
-      '#10b981': '辅助色',
-      '#3b82f6': '强调色',
-      '#f0fdf4': '背景色',
-      '#1f2937': '主色',
-      '#4b5563': '辅助色',
-      '#ef4444': '强调色',
-      '#f9fafb': '背景色',
-      '#f97316': '主色',
-      '#fdba74': '辅助色',
-      '#06b6d4': '强调色',
-      '#fffbeb': '背景色',
-    }
-    return colorMap[color] || '颜色'
+  const getColorName = (color: string, scheme: ColorScheme) => {
+    if (color === scheme.primary) return '主色'
+    if (color === scheme.secondary) return '辅助色'
+    if (color === scheme.accent) return '强调色'
+    if (color === scheme.neutral) return '中性色'
+    if (color === scheme.background) return '背景色'
+    return '颜色'
   }
 
   return (
@@ -176,7 +154,7 @@ export default function ColorScheme() {
                           onClick={() => copyToClipboard(color, index * 5 + idx)}
                         />
                         <div className="flex-1">
-                          <div className="text-sm font-medium text-gray-700">{getColorName(color)}</div>
+                          <div className="text-sm font-medium text-gray-700">{getColorName(color, scheme)}</div>
                           <div className="text-sm text-gray-500 font-mono">{color}</div>
                         </div>
                         <button
