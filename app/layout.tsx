@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
+import AuthProvider from '@/components/AuthProvider'
 
 export const metadata: Metadata = {
   title: '品牌VI生成器 - 智能创建专业品牌视觉',
@@ -16,8 +17,10 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className="bg-gray-50 min-h-screen">
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
+        <AuthProvider>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   )
