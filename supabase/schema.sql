@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   username TEXT UNIQUE NOT NULL,
   email TEXT UNIQUE NOT NULL,
   avatar_url TEXT,
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS design_history (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   action_type TEXT NOT NULL,
   action_data JSONB,
-  project_id UUID REFERENCES brand_projects(id),
+  project_id UUID REFERENCES brand_projects(id) ON DELETE CASCADE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
