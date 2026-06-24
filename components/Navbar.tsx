@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, Palette } from 'lucide-react'
+import { Menu, X, Palette, LogOut, User } from 'lucide-react'
 import Link from 'next/link'
+import { useSupabase } from './AuthProvider'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { client, session } = useSupabase()
 
   const navLinks = [
     { name: '首页', href: '/' },
@@ -14,6 +16,11 @@ export default function Navbar() {
     { name: '字体配对', href: '/font-pairing' },
     { name: '品牌指南', href: '/brand-guide' },
   ]
+
+  const handleLogout = async () => {
+    await client?.auth.signOut()
+    window.location.href = '/auth'
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
@@ -39,8 +46,21 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <button className="btn-secondary">登录</button>
-            <button className="btn-primary">免费试用</button>
+            {session ? (
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-gray-600 hover:text-brand-600 font-medium transition-colors"
+              >
+                <User className="w-4 h-4" />
+                <span>退出登录</span>
+                <LogOut className="w-4 h-4" />
+              </button>
+            ) : (
+              <>
+                <Link href="/auth" className="btn-secondary">登录</Link>
+                <Link href="/auth" className="btn-primary">免费试用</Link>
+              </>
+            )}
           </div>
 
           <button
@@ -65,8 +85,14 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="flex gap-4 pt-2">
-                <button className="btn-secondary flex-1">登录</button>
-                <button className="btn-primary flex-1">免费试用</button>
+                {session ? (
+                  <button onClick={handleLogout} className="btn-secondary flex-1">退出登录</button>
+                ) : (
+                  <>
+                    <Link href="/auth" className="btn-secondary flex-1" onClick={() => setIsOpen(false)}>登录</Link>
+                    <Link href="/auth" className="btn-primary flex-1" onClick={() => setIsOpen(false)}>免费试用</Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
