@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Sparkles, RefreshCw, Download, Heart, Eye } from 'lucide-react'
+import FileUploader from '@/components/FileUploader'
 
 export default function LogoGenerator() {
   const [brandName, setBrandName] = useState('')
@@ -102,6 +103,15 @@ export default function LogoGenerator() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">参考图片（可选）</label>
+              <p className="text-xs text-gray-400 mb-2">上传您喜欢的设计风格图片，AI将参考其风格生成Logo</p>
+              <FileUploader 
+                onUpload={(url) => console.log('参考图片上传:', url)}
+                label="上传参考图片"
+              />
             </div>
 
             <button
