@@ -94,6 +94,19 @@ CREATE TABLE IF NOT EXISTS design_history (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS website_content (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  section TEXT NOT NULL,
+  key TEXT NOT NULL,
+  value TEXT,
+  image_url TEXT,
+  description TEXT,
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  UNIQUE (section, key)
+);
+
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE brand_projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE logo_generations ENABLE ROW LEVEL SECURITY;
@@ -103,6 +116,7 @@ ALTER TABLE brand_assets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE brand_guides ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE design_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE website_content ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Profiles are viewable by owner" ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Profiles can be inserted by authenticated users" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
@@ -147,6 +161,11 @@ CREATE POLICY "Design history is viewable by owner" ON design_history FOR SELECT
 CREATE POLICY "Design history can be inserted by authenticated users" ON design_history FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Design history can be deleted by owner" ON design_history FOR DELETE USING (auth.uid() = user_id);
 
+CREATE POLICY "Website content is publicly viewable" ON website_content FOR SELECT USING (true);
+CREATE POLICY "Website content can be updated by authenticated users" ON website_content FOR UPDATE USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Website content can be inserted by authenticated users" ON website_content FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Website content can be deleted by authenticated users" ON website_content FOR DELETE USING (auth.uid() IS NOT NULL);
+
 CREATE INDEX idx_brand_projects_user_id ON brand_projects(user_id);
 CREATE INDEX idx_brand_projects_status ON brand_projects(status);
 CREATE INDEX idx_logo_generations_project_id ON logo_generations(project_id);
@@ -166,3 +185,4 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trigger_profiles_update BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER trigger_brand_projects_update BEFORE UPDATE ON brand_projects FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER trigger_user_preferences_update BEFORE UPDATE ON user_preferences FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER trigger_website_content_update BEFORE UPDATE ON website_content FOR EACH ROW EXECUTE FUNCTION update_updated_at();
